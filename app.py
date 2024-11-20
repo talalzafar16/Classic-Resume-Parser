@@ -42,7 +42,8 @@ def parse():
                 "phone": parsed_data.get('phone', []),
                 "location": parsed_data.get('location', []),
                 "skills": parsed_data.get('skills', []),
-                "education": parsed_data.get('education', [])
+                "education": parsed_data.get('education', []),
+                "expierence": parsed_data.get('expierence', [])
             })
         except Exception as e:
             resumes_data.append({

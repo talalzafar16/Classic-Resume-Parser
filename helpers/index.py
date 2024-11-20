@@ -37,7 +37,7 @@ def ResumeParser(pdf_path):
     clarifified_ouput=OutputClarifier(result)
     text2=re.sub(r'\s+', ' ', extText)
     text2 = nlp(text2)
-    data = {"name": None, "email": None, "phone": None, "skills": [],"education":[]}
+    data = {"name": None, "email": None, "phone": None, "skills": [],"education":[],"expierence":[]}
     skillsSet=set()
     for ent in text.ents:
             if ent.label_ == "PERSON":
@@ -67,11 +67,11 @@ def ResumeParser(pdf_path):
         if skill in skills_keywords:
             skillsSet.add(skill)
     data["skills"] = list(skillsSet)
-
+    print(clarifified_ouput)
     data["name"]=clarifified_ouput["name"]        
     data["location"]=clarifified_ouput["location"] 
     data["education"]=clarifified_ouput["education"] 
-    print(clarifified_ouput)       
+    data["expierence"]=clarifified_ouput["expierence"] 
     return data
 
 

@@ -8,8 +8,8 @@ def HumanPrompt(cleaned_resume):
     1. Name of the person.
     2. Location (city, state, or country).
     3. Educational qualifications (degree, institution, and year of graduation).
-   
-
+    4. Job experience (Job Title, Company, Duration, Key Responsibilities).
+    the keys of json should be name, location, education and job
     The extracted details should be in a structured JSON format.
     Only return the JSON object, no text. The output should start with a curly bracket and also end with it, no text.
 
@@ -29,7 +29,8 @@ def OutputClarifier(result):
         name = parsed_content.get("name", "Name not found")
         location = parsed_content.get("location", "Location not found")
         education = parsed_content.get("education", "Education not found")
-        return {"name":name,"location":location,"education":education}
+        expierence = parsed_content.get("job", "job not found")
+        return {"name":name,"location":location,"education":education,"expierence":expierence}
 
     except json.JSONDecodeError:
         print("Error: The content is not a valid JSON string.")
