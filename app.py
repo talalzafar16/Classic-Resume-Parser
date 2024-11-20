@@ -1,5 +1,3 @@
-import nltk
-nltk.download('stopwords')
 import spacy
 nlp = spacy.load("en_core_web_sm")
 from flask import Flask, request, jsonify
@@ -77,7 +75,8 @@ def classify():
             classification = classifier(extText)
             resumes_data.append({
                 "filename": uploaded_file.filename,
-                "category": classification,
+                "category": classification["category_name"],
+                "name": classification["name"],
             })
         except Exception as e:
             resumes_data.append({
