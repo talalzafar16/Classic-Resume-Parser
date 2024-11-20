@@ -1,5 +1,4 @@
 from pdfminer.high_level import extract_text
-from docx import Document
 from data.skills import skills_keywords
 import spacy
 import re
@@ -8,11 +7,7 @@ nlp = spacy.load("en_core_web_sm")
 def extract_text_from_pdf(pdf_path):
     text = extract_text(pdf_path)
     return text
-    
-def extract_text_from_docx(docx_path):
-    doc = Document(docx_path)
-    text = "\n".join([para.text for para in doc.paragraphs])
-    return text
+ 
 
 def preprocess_text(text):
     text = text.lower()
