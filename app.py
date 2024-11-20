@@ -91,6 +91,45 @@ def classify():
     return jsonify({"resumes": resumes_data})
 
 
+@app.route('/get-filter-data', methods=["POST"])
+def filter():
+    if 'files' not in request.files:
+        return jsonify({"error": "No files part in the request"}), 400
+    
+    category_filter = request.form.get("category_name", None)
+
+    if not category_filter:
+        return jsonify({"error": "No category_name provided"}), 400
+
+    uploaded_files = request.files.getlist('files')  
+    resumes_data = []  
+    
+    for uploaded_file in uploaded_files:
+        if uploaded_file.filename == '':
+            continue
+        temp_path = os.path.join(os.getcwd(), "temp", uploaded_file.filename)
+        os.makedirs(os.path.dirname(temp_path), exist_ok=True)
+        uploaded_file.save(temp_path)
+        
+        try:
+            extText=extract_text(temp_path)
+            classification = classifier(extText)
+            if classification["category_name"] == category_filter:
+                resumes_data.append({
+                    "filename": uploaded_file.filename,
+                    "category": classification["category_name"],
+                    "name": classification["name"],
+                })
+        except Exception as e:
+            resumes_data.append({
+                "filename": uploaded_file.filename,
+                "error": str(e)
+            })
+        finally:
+            os.remove(temp_path)
+
+    return jsonify({"resumes": resumes_data})
+
 
 
 

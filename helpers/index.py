@@ -67,7 +67,6 @@ def ResumeParser(pdf_path):
         if skill in skills_keywords:
             skillsSet.add(skill)
     data["skills"] = list(skillsSet)
-    print(clarifified_ouput)
     data["name"]=clarifified_ouput["name"]        
     data["location"]=clarifified_ouput["location"] 
     data["education"]=clarifified_ouput["education"] 
