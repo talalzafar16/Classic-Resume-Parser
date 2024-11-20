@@ -115,6 +115,6 @@ def classifier(resume):
     return {
         "category_name": category_name,
         "name": clarifified_ouput["name"],
-        "rank": rank-8
+        "rank": rank-8.62
     }
 
