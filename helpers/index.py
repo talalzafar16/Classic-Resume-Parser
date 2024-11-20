@@ -1,7 +1,9 @@
+import numpy as np
 from data.skills import skills_keywords
 import spacy
 import re
 import pickle
+from sklearn.metrics.pairwise import cosine_similarity
 from models.category_mapper import category_mapping
 import os
 from langchain_core.prompts import ChatPromptTemplate
@@ -74,18 +76,45 @@ def ResumeParser(pdf_path):
     return data
 
 
+def normalize_distance_to_rank(distance, min_distance, max_distance):
+    """
+    Normalize the distance to a rank between 1 and 100.
+    Smaller distances should give a higher rank (closer to 100).
+    """
+    # Avoid division by zero and ensure the rank is between 1 and 100
+    normalized_rank = 100 - ((distance - min_distance) / (max_distance - min_distance)) * 99
+    return max(1, min(100, normalized_rank))
 
-
+import numpy as np
 def classifier(resume):
     cleaned_resume = cleanResume(resume)
     system = "You are a highly skilled data extractor, capable of identifying and extracting specific details from parsed resumes."
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", HumanPrompt(cleaned_resume))])
     chain = prompt | chat
     result = chain.invoke({})
-    clarifified_ouput=OutputClarifier(result)
+    clarifified_ouput = OutputClarifier(result)
+
     # Perform classification
     input_features = tfidf.transform([cleaned_resume])
     prediction_id = clf.predict(input_features)[0]
     category_name = category_mapping.get(prediction_id, "Unknown")
+    
+    # Get the nearest neighbors of the predicted class (for the current input)
+    distances, indices = clf.kneighbors(input_features, n_neighbors=5)  # Adjust n_neighbors as needed
+    
+    # Calculate the approximate centroid of the predicted class
+    nearest_neighbor_features = clf._fit_X[indices[0]]  # The training data corresponding to the nearest neighbors
+    predicted_centroid = nearest_neighbor_features.mean(axis=0)  # Mean of the nearest neighbors
 
-    return {"category_name":category_name,"name":clarifified_ouput["name"]}
+    # Compute the distance from the input feature to this "centroid"
+    distance_to_centroid = np.linalg.norm(input_features.toarray() - predicted_centroid)
+    rank = normalize_distance_to_rank(distance_to_centroid, 1, 100)
+    
+
+    # Return the classification result along with the distance to centroid
+    return {
+        "category_name": category_name,
+        "name": clarifified_ouput["name"],
+        "rank": rank-8
+    }
+

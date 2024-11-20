@@ -78,6 +78,7 @@ def classify():
             resumes_data.append({
                 "filename": uploaded_file.filename,
                 "category": classification["category_name"],
+                "rank":classification["rank"],
                 "name": classification["name"],
             })
         except Exception as e:
@@ -119,6 +120,7 @@ def filter():
                     "filename": uploaded_file.filename,
                     "category": classification["category_name"],
                     "name": classification["name"],
+                    "rank":classification["rank"],
                 })
         except Exception as e:
             resumes_data.append({
